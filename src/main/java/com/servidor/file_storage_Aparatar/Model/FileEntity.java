@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Arquivo")
+@Table(name = "entidade_arquivo")
 public class FileEntity {
     
     @Id
@@ -16,15 +16,15 @@ public class FileEntity {
     private Long id;
 
     // @NotBlank(message = "O nome não pode ser vazio.")
-    @Column(name = "Nome_arquivo", length = 255)
+    @Column(name = "Nome_arquivo")
     private String nome_arquivo;
 
     // @NotBlank(message = "A URI do arquivo não pode ser vazia.")
     @Column(name = "Uri_arquivo")
     private String uri_arquivo;
 
-    @Column(name = "Descricao_arquivo")
-    private String descricao_arquivo;
+    // @Column(name = "Descricao_arquivo")
+    // private String descricao_arquivo;
     
 
 
@@ -44,11 +44,11 @@ public class FileEntity {
         return this.uri_arquivo;
     }
 
-    public void setDescricaoArquivo(String descricao_arquivo){
-        this.descricao_arquivo = descricao_arquivo;
-    }
+    // public void setDescricaoArquivo(String descricao_arquivo){
+    //     this.descricao_arquivo = descricao_arquivo;
+    // }
 
-    public String getDescricaoArquivo() {
-        return this.descricao_arquivo;
-    }
+    // public String getDescricaoArquivo() {
+    //     return this.descricao_arquivo;
+    // }
 }

@@ -18,6 +18,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import com.servidor.file_storage_Aparatar.Config.FileStorageAparatarProperties;
+import com.servidor.file_storage_Aparatar.Model.FileEntity;
+import com.servidor.file_storage_Aparatar.FileStorageAparatarApplication;
 import com.servidor.file_storage_Aparatar.Repository.FileStorageRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,14 +27,18 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class FileStorageService {
 
+    private final FileStorageAparatarApplication fileStorageAparatarApplication;
+
     private final FileStorageRepository fileStorageRepository;
     private final Path fileStorageLocation;
     
-    public FileStorageService(FileStorageRepository fileStorageRepository, FileStorageAparatarProperties fileStorageLocation){
+    public FileStorageService(FileStorageRepository fileStorageRepository, FileStorageAparatarProperties fileStorageLocation, FileStorageAparatarApplication fileStorageAparatarApplication){
         this.fileStorageRepository = fileStorageRepository;
 
         this.fileStorageLocation = Paths.get(fileStorageLocation.getUploadDir())
         .toAbsolutePath().normalize();
+
+        this.fileStorageAparatarApplication = fileStorageAparatarApplication;
     }
 
     public ResponseEntity<String> salvarArquivo(MultipartFile file, String fileName){
@@ -43,10 +49,17 @@ public class FileStorageService {
 
             //Gerar o link de download
             String uriArquivo = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/files/download/").path(fileName).toUriString();
+            .path("/files/download/")
+            .path(fileName).toUriString();
 
+            //Salvando dados da entidade do arquivo.
+            FileEntity _file = new FileEntity();
+            _file.setNomeArquivo(fileName);
+            _file.setUriArquivo(uriArquivo);
+            fileStorageRepository.save(_file);
+            
             return ResponseEntity.ok("Arquivo recebido com sucesso: "+uriArquivo);
- 
+
         } catch (IOException ex){
             return ResponseEntity.badRequest().build();
         }
@@ -74,7 +87,6 @@ public class FileStorageService {
 
     public ResponseEntity<List<String>> listarArquivos() {
         try {
-
             List<String> fileNames = Files.list(fileStorageLocation)
             .map(Path::getFileName)
             .map(Path::toString)

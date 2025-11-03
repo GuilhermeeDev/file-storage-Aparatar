@@ -32,7 +32,8 @@ public class FileStorageService {
     private final FileStorageRepository fileStorageRepository;
     private final Path fileStorageLocation;
     
-    public FileStorageService(FileStorageRepository fileStorageRepository, FileStorageAparatarProperties fileStorageLocation, FileStorageAparatarApplication fileStorageAparatarApplication){
+    public FileStorageService(FileStorageRepository fileStorageRepository, FileStorageAparatarProperties fileStorageLocation,
+    FileStorageAparatarApplication fileStorageAparatarApplication){
         this.fileStorageRepository = fileStorageRepository;
 
         this.fileStorageLocation = Paths.get(fileStorageLocation.getUploadDir())

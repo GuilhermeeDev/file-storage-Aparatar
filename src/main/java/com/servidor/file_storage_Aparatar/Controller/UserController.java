@@ -2,8 +2,8 @@ package com.servidor.file_storage_Aparatar.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.servidor.file_storage_Aparatar.Model.LoginRequestDTO;
 import com.servidor.file_storage_Aparatar.Model.UserEntity;
-import com.servidor.file_storage_Aparatar.Model.UserPasswordEntity;
 import com.servidor.file_storage_Aparatar.Service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,17 +22,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/create_user")
+    @PostMapping("/create")
     public UserEntity criar_usuario(@RequestBody UserEntity userEntity) {
         return  userService.salvarUsuario(userEntity);
     }
 
-    @GetMapping("/list_users")
+    @GetMapping("/list")
     public List<UserEntity> listar_usuarios () {
         return userService.listarUsuarios();
     }
     
-    @GetMapping("/list_users/{id}")
+    @GetMapping("/list/{id}")
     public ResponseEntity<UserEntity> getMethodName(@PathVariable Long id) {
         
         UserEntity usuario = userService.obterUsuarioPeloId(id);
@@ -40,17 +40,17 @@ public class UserController {
     
     }
 
-    //metodo teste
-    @PostMapping("/comparar/{id}")
-    public ResponseEntity<String>compararHash(@RequestBody UserPasswordEntity userPasswordEntity,
-    @PathVariable Long id) {
+    @PostMapping("/login")
+    public ResponseEntity<?>compararHash(@RequestBody LoginRequestDTO loginRequestDTO) {
 
-        String senhaDigitada = userPasswordEntity.getSenhaDigitada();
-        Boolean teste = userService.comparaHashSenha(senhaDigitada, id);
+        String emailDigitado = loginRequestDTO.getEmail();
+        String senhaDigitada = loginRequestDTO.getSenha();
+
+        Boolean teste = userService.comparaHashSenha(senhaDigitada, emailDigitado);
         
         if (teste!=false) return ResponseEntity.ok("Pessoa validada!");
         
-        return ResponseEntity.ok("Dado senhaDigitada: "+senhaDigitada+" Id: "+id+" resposta: "+teste);
+        return ResponseEntity.ok("Dado senhaDigitada: "+senhaDigitada+" Email: "+emailDigitado+" resposta: "+teste);
 
     }
     

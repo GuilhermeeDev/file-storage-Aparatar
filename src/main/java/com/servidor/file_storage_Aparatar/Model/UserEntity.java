@@ -7,23 +7,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-
 @Entity
-@Table(name = "usuario")
+@Table(name = "Usuario")
 public class UserEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
 
-    @NotNull(message="O nome não pode ser vazio!")
-    @Column(name = "user_name", length = 255)
+    @NotNull
+    @Column(name = "nome", length = 255)
     private String nome;
     
-    //Senha em String para manipulação de criptografia.
-    @NotNull(message = "A senha não pose ser vazia!")
-    @Column(name = "user_password",length = 255)
+    @NotNull
+    @Column(name = "email", length = 255)
+    private String email;
+
+    @NotNull
+    @Column(name = "senha",length = 255)
     private String senha;
 
     public Long getId(){
@@ -36,6 +38,14 @@ public class UserEntity {
 
     public String getUserSenha(){
         return this.senha;
+    }
+
+    private String getUserEmail(){
+        return this.email;
+    }
+
+    public void setUserEmail(String email){
+        this.email = email;
     }
 
     public void setUserNome(String nome){

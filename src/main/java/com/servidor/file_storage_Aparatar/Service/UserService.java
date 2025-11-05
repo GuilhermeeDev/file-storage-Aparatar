@@ -1,4 +1,5 @@
 package com.servidor.file_storage_Aparatar.Service;
+
 import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,23 +19,23 @@ public class UserService {
 
     public UserEntity salvarUsuario(UserEntity userEntity){
         //pegando a senha para encriptografar
-        String _senha = userEntity.getUserSenha();
+        // String _senha = userEntity.getUserSenha();
 
-        //processo de criptografia
-        String encriptar = passwordEncoder.encode(_senha);
-        userEntity.setUserSenha(encriptar);
+        // //processo de criptografia
+        // String encriptar = passwordEncoder.encode(_senha);
+        // userEntity.setUserSenha(encriptar);
         
         return userRepository.save(userEntity);
     }
 
-    public String getSenhaPeloID(Long id) {
-        return userRepository.findById(id)
+    public String getHashPeloEmail(String email) {
+        return userRepository.findByEmail(email)
             .map(UserEntity::getUserSenha)
             .orElse(null);
     }
 
-    public boolean comparaHashSenha(String senhaDigitada, Long id){
-        String hash = getSenhaPeloID(id);
+    public boolean comparaHashSenha(String senhaDigitada, String email){
+        String hash = getHashPeloEmail(email);
         if (hash == null) return false;
         return passwordEncoder.matches(senhaDigitada,hash);
     

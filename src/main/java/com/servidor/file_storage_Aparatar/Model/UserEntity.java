@@ -26,6 +26,10 @@ public class UserEntity {
     @Column(name = "user_password",length = 255)
     private String senha;
 
+    public Long getId(){
+        return this.id;
+    }
+
     public String getUserNome(){
         return this.nome;
     }

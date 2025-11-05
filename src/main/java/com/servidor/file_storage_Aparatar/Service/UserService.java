@@ -18,19 +18,19 @@ public class UserService {
     }
 
     public UserEntity salvarUsuario(UserEntity userEntity){
-        //pegando a senha para encriptografar
-        // String _senha = userEntity.getUserSenha();
+        // pegando a senha para encriptografar
+        String _senha = userEntity.getSenha();
 
-        // //processo de criptografia
-        // String encriptar = passwordEncoder.encode(_senha);
-        // userEntity.setUserSenha(encriptar);
+        //processo de criptografia
+        String encriptar = passwordEncoder.encode(_senha);
+        userEntity.setSenha(encriptar);
         
         return userRepository.save(userEntity);
     }
 
     public String getHashPeloEmail(String email) {
         return userRepository.findByEmail(email)
-            .map(UserEntity::getUserSenha)
+            .map(UserEntity::getSenha)
             .orElse(null);
     }
 
@@ -38,7 +38,6 @@ public class UserService {
         String hash = getHashPeloEmail(email);
         if (hash == null) return false;
         return passwordEncoder.matches(senhaDigitada,hash);
-    
     }
 
     public List<UserEntity> listarUsuarios(){

@@ -36,7 +36,7 @@ public class UserEntity {
         return this.senha;
     }
 
-    private String getEmail(){
+    public String getEmail(){
         return this.email;
     }
 

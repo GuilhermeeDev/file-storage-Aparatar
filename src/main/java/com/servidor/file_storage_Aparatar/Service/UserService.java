@@ -44,7 +44,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserEntity obterUsuarioPeloId(Long id){
+    public UserEntity getUsuarioPeloId(Long id){
         return userRepository.findById(id).orElse(null);
     }
 

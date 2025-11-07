@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armazenamento - File Storage Aparatar</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            text-align: left;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #1abc9c;
+        }
+
+        main {
+            padding: 3rem 2rem;
+            background-color: #f5f6fa;
+            min-height: 80vh;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: auto;
+            text-align: left;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        #fileList {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0.6rem 0;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item span {
+            color: #2c3e50;
+        }
+
+        .file-item button {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .file-item button:hover {
+            background-color: #16a085;
+        }
+
+        .upload-section {
+            margin-top: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        input[type="file"] {
+            margin-top: .5rem;
+        }
+
+        .btn {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #16a085;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #2c3e50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>File Storage Aparatar</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/register">Registrar</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content">
+
+            <button class="btn" onclick="listarArquivos()">Atualizar Lista</button>
+
+            <div id="fileList">
+                <p>Carregando arquivos...</p>
+            </div>
+
+            <div class="upload-section">
+                <h3>Upload de Arquivo</h3>
+                <form id="uploadForm">
+                    <input type="file" id="fileInput" required>
+                    <br>
+                    <button class="btn" type="submit">Enviar Arquivo</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        async function listarArquivos() {
+            const lista = document.getElementById("fileList");
+            lista.innerHTML = "<p>Carregando...</p>";
+
+            try {
+                const response = await fetch(`/api/list`);
+                if (!response.ok) throw new Error("Erro ao listar arquivos");
+
+                const arquivos = await response.json();
+                if (arquivos.length === 0) {
+                    lista.innerHTML = "<p>Nenhum arquivo encontrado.</p>";
+                    return;
+                }
+
+                lista.innerHTML = "";
+                arquivos.forEach(nome => {
+                    const item = document.createElement("div");
+                    item.classList.add("file-item");
+
+                        item.innerHTML = `
+                            <span>📄 ${nome}</span>
+                            <button onclick="baixarArquivo('${nome}')">Baixar</button>
+                        `;
+
+                    lista.appendChild(item);
+                });
+
+            } catch (error) {
+                lista.innerHTML = "<p>Erro ao carregar lista de arquivos.</p>";
+            }
+        }
+
+        async function baixarArquivo(nome) {
+            const caminhoCompleto = caminhoAtual ? `${caminhoAtual}/${nome}` : nome;
+            window.location.href = `/api/download/${encodeURIComponent(caminhoCompleto)}`;
+        }
+
+        document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const file = document.getElementById("fileInput").files[0];
+            if (!file) {
+                alert("Selecione um arquivo primeiro!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const urlUpload = caminhoAtual ? `/api/upload?dir=${encodeURIComponent(caminhoAtual)}` : "/api/upload";
+
+            try {
+                const response = await fetch(urlUpload, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const resultado = await response.text();
+                alert(resultado);
+                listarArquivos();
+            } catch (error) {
+                alert("Erro ao enviar arquivo.");
+            }
+        });
+
+        window.onload = listarArquivos;
+    </script>
+
+</body>
+</html>

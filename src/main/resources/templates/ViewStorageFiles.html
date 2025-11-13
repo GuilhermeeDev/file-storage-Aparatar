@@ -193,37 +193,40 @@
             }
         }
 
+
         async function baixarArquivo(nome) {
-            const caminhoCompleto = caminhoAtual ? `${caminhoAtual}/${nome}` : nome;
-            window.location.href = `/api/download/${encodeURIComponent(caminhoCompleto)}`;
+            try {
+                window.location.href = `/api/download/${nome}`;
+            } catch {
+                alert("O arquivo não pode ser baixado.")
+            }
+
         }
 
         document.getElementById("uploadForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const file = document.getElementById("fileInput").files[0];
-            if (!file) {
-                alert("Selecione um arquivo primeiro!");
-                return;
-            }
+                    e.preventDefault();
+                    const file = document.getElementById("fileInput").files[0];
+                    if (!file) {
+                        alert("Selecione um arquivo primeiro!");
+                        return;
+                    }
 
-            const formData = new FormData();
-            formData.append("file", file);
+                    const formData = new FormData();
+                    formData.append("file", file);
 
-            const urlUpload = caminhoAtual ? `/api/upload?dir=${encodeURIComponent(caminhoAtual)}` : "/api/upload";
+                    try {
+                        const response = await fetch("/api/upload", {
+                            method: "POST",
+                            body: formData
+                        });
 
-            try {
-                const response = await fetch(urlUpload, {
-                    method: "POST",
-                    body: formData
+                        const resultado = await response.text();
+                        alert(resultado);
+                        listarArquivos();
+                    } catch (error) {
+                        alert("Erro ao enviar arquivo.");
+                    }
                 });
-
-                const resultado = await response.text();
-                alert(resultado);
-                listarArquivos();
-            } catch (error) {
-                alert("Erro ao enviar arquivo.");
-            }
-        });
 
         window.onload = listarArquivos;
     </script>

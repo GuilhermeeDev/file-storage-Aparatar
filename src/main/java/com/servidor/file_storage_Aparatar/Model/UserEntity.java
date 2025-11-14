@@ -1,5 +1,6 @@
 package com.servidor.file_storage_Aparatar.Model;
 
+import io.micrometer.common.lang.NonNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,12 +16,15 @@ public class UserEntity {
     @Column(name = "id")
     private Long id;
 
+    @NonNull
     @Column(name = "nome", length = 255)
     private String nome;
 
+    @NonNull
     @Column(name = "email", length = 255)
     private String email;
 
+    @NonNull
     @Column(name = "senha",length = 255)
     private String senha;
 

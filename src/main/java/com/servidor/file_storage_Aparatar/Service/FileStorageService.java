@@ -83,7 +83,6 @@ public class FileStorageService {
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
-
     }
 
     public ResponseEntity<List<String>> listarArquivos() {

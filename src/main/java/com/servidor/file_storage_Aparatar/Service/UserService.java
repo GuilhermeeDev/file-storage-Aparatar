@@ -1,12 +1,10 @@
 package com.servidor.file_storage_Aparatar.Service;
 
 import java.util.List;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.servidor.file_storage_Aparatar.Model.UserEntity;
 import com.servidor.file_storage_Aparatar.Repository.UserRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 
 @Service

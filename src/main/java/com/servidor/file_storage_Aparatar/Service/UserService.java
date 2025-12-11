@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.servidor.file_storage_Aparatar.Model.UserEntity;
 import com.servidor.file_storage_Aparatar.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -17,10 +18,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserEntity salvarUsuario(UserEntity userEntity){
+    public UserEntity salvarUsuario(UserEntity userEntity) {
         // pegando a senha para encriptografar
         String _senha = userEntity.getSenha();
-
+        if (_senha == null || _senha.isBlank()) {
+            throw new IllegalArgumentException("Não foi possível salvar o usuário: campo 'senha' está vazio.");
+        }
         //processo de criptografia
         String encriptar = passwordEncoder.encode(_senha);
         userEntity.setSenha(encriptar);
@@ -29,9 +32,11 @@ public class UserService {
     }
 
     public String getHashPeloEmail(String email) {
-        return userRepository.findByEmail(email)
-            .map(UserEntity::getSenha)
-            .orElse(null);
+        return userRepository.findByEmail(email).map(UserEntity::getSenha).orElse(null);
+    }
+
+    public UserEntity getUsuarioPorEmail(String email){
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     public boolean comparaHashSenha(String senhaDigitada, String email){
@@ -49,7 +54,10 @@ public class UserService {
     }
 
     public void deletarUsuarioPorID(Long id){
-        userRepository.deleteById(id);
+        try{
+            userRepository.deleteById(id);
+        }catch (EntityNotFoundException e){
+           throw new EntityNotFoundException("Usuario com id: "+id+" não encontrado.");
+        }
     }
-
 }

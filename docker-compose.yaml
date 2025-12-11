@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:17
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: FileStorageAparatar
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      resources:
+        cpus: "2"
+        memory: "2GB"
+  api:
+    container_name: file-storage-api
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/FileStorageAparatar
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      FILE_UPLOAD_DIR: /app/uploads
+    volumes:
+      - /home/guilherme/Apps/@Codando/uploads:/app/uploads
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: "2GB"
+    restart: always
+
+volumes:
+  pgdata:

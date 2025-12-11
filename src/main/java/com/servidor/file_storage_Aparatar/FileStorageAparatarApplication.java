@@ -8,6 +8,7 @@ public class FileStorageAparatarApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FileStorageAparatarApplication.class, args);
+		System.out.printf(" ");
+		System.out.printf("Acesse em: http://localhost:8080/");
 	}
-
 }
